@@ -228,6 +228,11 @@ const P4_USB_UART_TRANSITION_BAUD: u32 = 3_000_000;
 // protocol frame. The first host write can also be lost while the adapter or
 // UART0 settles, so keep requesting identity throughout the probe window.
 const SERIAL_PROBE_TIMEOUT: Duration = Duration::from_millis(8_000);
+// Local build: the P4 runtime can spend ~21s restoring its built-in component
+// catalog before the transport starts, and opening the CH343 releases the
+// board out of reset. Eight seconds is not enough for a cold boot on such a
+// device, so the first attempt keeps a longer window.
+const SERIAL_PROBE_COLD_BOOT_TIMEOUT: Duration = Duration::from_millis(40_000);
 // Background fallback baud rates share a short window on every platform.
 // serial_probe_attempt_timeout retains eight seconds for the first P4 probe
 // and every first Unix probe (including cold-boot Linux board runtimes).
@@ -983,7 +988,9 @@ fn send_serial_probe_handshakes(
 }
 
 fn serial_probe_attempt_timeout(index: usize, baud: u32, timeout: Duration) -> Duration {
-    if index == 0 && (matches!(baud, P4_UNIFIED_UART_BAUD | P4_COMPAT_UART_BAUD) || !cfg!(windows)) {
+    if index == 0 {
+        timeout.max(SERIAL_PROBE_COLD_BOOT_TIMEOUT)
+    } else if matches!(baud, P4_UNIFIED_UART_BAUD | P4_COMPAT_UART_BAUD) || !cfg!(windows) {
         timeout.max(SERIAL_PROBE_TIMEOUT)
     } else {
         timeout
