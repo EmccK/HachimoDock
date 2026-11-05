@@ -37,7 +37,7 @@ const generatedRuntime = join(tauriRoot, "generated-runtime");
 const bundledP4FirmwareDir = join(tauriRoot, "firmware", "esp32-p4");
 const p4ProjectCmake = join(repositoryRoot, "firmware", "CMakeLists.txt");
 const auditedFfmpegBinarySha256 = {
-  "macos-arm64": "e340c148c720888a528e7bd2e7867da3b4bea91d1f6e508c9526111257ee0468",
+  "macos-arm64": "fbbccfb581309412c5f9353196e128741c3ad4fac229fd07061ddebb70107262",
   "macos-x64": "8817b8186324bcfac4c18070ba7c1981cf05b1de2b722ed0514fa6dfce4e9bf0",
   "windows-x64": "1cefca14ea713d5d7e7a1b948299142831185487f5efb14914d049ba9090d95f",
 };
